@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Wisdom Box
               Container(
@@ -220,7 +220,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         child: Column(
-          mainAxisAlignment: MainAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             CircleAvatar(
               radius: 28,
@@ -359,19 +359,16 @@ class PdfViewerPage extends StatelessWidget {
         title: const Text("الكتاب المدرسي", style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
-      body: const PDF(
-        enableSwipe: true,
-        swipeHorizontal: false,
-        autoSpacing: true,
-        pageFling: true,
-      ).fromAsset('arabic_book.pdf'),
+      body: const PDFView(
+        assetPath: 'assets/books/arabic_book.pdf',
+      ),
     );
   }
 }
 
 // ==================== شاشة التحضير الذكي ====================
 
-class LessonPlannerPage extends StatefulWidget {
+class LessonPlannerPage extends StatelessWidget {
   const LessonPlannerPage({super.key});
 
   @override
@@ -428,7 +425,6 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
       _generatedActivities = null;
     });
 
-    // محاكاة استجابة الذكاء الاصطناعي بناءً على إدخال المعلم
     Future.delayed(const Duration(seconds: 2), () {
       final lesson = _lessonController.text.trim();
       setState(() {
@@ -473,16 +469,15 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // بطاقة الإدخال والتحكم
               Card(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 elevation: 3,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
-                    crossAxisAlignment: CrossAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       const Text(
                         "توليد أنشطة وتمارين بالذكاء الاصطناعي",
@@ -542,7 +537,6 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
 
               const SizedBox(height: 20),
 
-              // حالة التحميل
               if (_isLoading)
                 const Center(
                   child: Padding(
@@ -557,7 +551,6 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
                   ),
                 ),
 
-              // نتيجة التوليد
               if (_generatedActivities != null)
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -566,10 +559,10 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
                   child: Padding(
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
-                      crossAxisAlignment: CrossAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
-                          mainAxisAlignment: MainAlignment.spaceBetween,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             const Text(
                               "الأنشطة والتمارين المقترحة:",
