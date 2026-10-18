@@ -28,6 +28,9 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Recreate Android Project with App Name
+        run: flutter create . --org com.siraj.app --project-name syria_grade2_app --platforms=android
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -39,4 +42,3 @@ jobs:
         with:
           name: release-apks
           path: build/app/outputs/flutter-apk/
-          
