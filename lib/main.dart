@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAlignment.stretch,
             children: [
               // Wisdom Box
               Container(
@@ -360,7 +360,7 @@ class PdfViewerPage extends StatelessWidget {
         centerTitle: true,
       ),
       body: const PDFView(
-        assetPath: 'assets/books/arabic_book.pdf',
+        filePath: 'assets/books/arabic_book.pdf',
       ),
     );
   }
