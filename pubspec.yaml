@@ -1,5 +1,5 @@
 name: syria_grade2_app
-description: "A fun educational app for 2nd Grade students in Syria."
+description: "تطبيق سِراج التعليمي للصف الثاني الابتدائي"
 publish_to: 'none'
 
 version: 1.0.0+1
@@ -19,4 +19,3 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  
