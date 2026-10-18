@@ -26,12 +26,13 @@ jobs:
     - name: Generate Android Project Files
       run: flutter create . --platforms=android --project-name=syria_grade2_app
 
+    - name: Set App Display Name
+      run: |
+        sed -i 's/android:label="syria_grade2_app"/android:label="سِراج"/g' android/app/src/main/AndroidManifest.xml
+        sed -i 's/android:label="@string/app_name"/android:label="سِراج"/g' android/app/src/main/AndroidManifest.xml
+
     - name: Install Dependencies
       run: flutter pub get
-
-    - name: Generate App Icon
-      run: |
-        flutter pub run flutter_launcher_icons:main
 
     - name: Build APK
       run: flutter build apk --split-per-abi
@@ -41,3 +42,4 @@ jobs:
       with:
         name: app-release-apk
         path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+        
