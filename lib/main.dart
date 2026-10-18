@@ -138,7 +138,8 @@ class HomePage extends StatelessWidget {
                     const SizedBox(height: 5),
                     Text(
                       subtitle,
-                      style: const TextStyle(fontSize: 14, color: Colors.white90),
+                      style: TextStyle(fontSize: 14, color: Colors.white.withOpacity(0.9)),
+                      
                     ),
                   ],
                 ),
