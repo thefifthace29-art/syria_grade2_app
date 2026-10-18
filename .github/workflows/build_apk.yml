@@ -33,11 +33,25 @@ jobs:
           rm -rf android
           flutter create . --org com.siraj.app --project-name syria_grade2_app --platforms=android
 
+      - name: Upgrade Android Gradle Plugin & SDK 35
+        run: |
+          # 1. تحديث compileSdk و targetSdk إلى 35
+          sed -i 's/compileSdkVersion.*/compileSdkVersion 35/' android/app/build.gradle || true
+          sed -i 's/compileSdk = .*/compileSdk = 35/' android/app/build.gradle || true
+          sed -i 's/targetSdkVersion.*/targetSdkVersion 35/' android/app/build.gradle || true
+          sed -i 's/targetSdk = .*/targetSdk = 35/' android/app/build.gradle || true
+          
+          # 2. ترقية Android Gradle Plugin إلى إصدار حديث يدعم SDK 35
+          sed -i 's/com.android.tools.build:gradle:.*/com.android.tools.build:gradle:8.3.0"/' android/build.gradle || true
+          
+          # 3. ترقية Gradle Wrapper إلى 8.4
+          sed -i 's/gradle-.*-all.zip/gradle-8.4-bin.zip/' android/gradle/wrapper/gradle-wrapper.properties || true
+
       - name: Install dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
