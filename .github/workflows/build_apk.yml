@@ -28,10 +28,14 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Remove Old Android Folder & Recreate
+      - name: Recreate Android Project & Set SDK 35
         run: |
           rm -rf android
           flutter create . --org com.siraj.app --project-name syria_grade2_app --platforms=android
+          # تحديث إعدادات الـ SDK تلقائياً إلى 35
+          sed -i 's/minSdkVersion.*/minSdkVersion 21/' android/app/build.gradle
+          sed -i 's/targetSdkVersion.*/targetSdkVersion 35/' android/app/build.gradle
+          sed -i 's/compileSdkVersion.*/compileSdkVersion 35/' android/app/build.gradle
 
       - name: Install dependencies
         run: flutter pub get
