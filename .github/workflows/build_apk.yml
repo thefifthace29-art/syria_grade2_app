@@ -28,23 +28,19 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Recreate Android Project & Set SDK 35
+      - name: Recreate Android Project
         run: |
           rm -rf android
           flutter create . --org com.siraj.app --project-name syria_grade2_app --platforms=android
-          # تحديث إعدادات الـ SDK تلقائياً إلى 35
-          sed -i 's/minSdkVersion.*/minSdkVersion 21/' android/app/build.gradle
-          sed -i 's/targetSdkVersion.*/targetSdkVersion 35/' android/app/build.gradle
-          sed -i 's/compileSdkVersion.*/compileSdkVersion 35/' android/app/build.gradle
 
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Build APK (Split per ABI)
-        run: flutter build apk --release --split-per-abi
+      - name: Build APK
+        run: flutter build apk --release
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: release-apks
-          path: build/app/outputs/flutter-apk/
+          name: release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
