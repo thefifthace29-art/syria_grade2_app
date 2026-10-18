@@ -1,7 +1,6 @@
 name: syria_grade2_app
-description: "تطبيق سِراج التعليمي للصف الثاني الابتدائي"
+description: "تطبيق سِراج - الصف الثاني الابتدائي"
 publish_to: 'none'
-
 version: 1.0.0+1
 
 environment:
@@ -10,14 +9,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.6
   flutter_pdfview: ^1.3.2
-  path_provider: ^2.1.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^3.0.0
+  flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
