@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const SirajApp());
@@ -15,11 +18,11 @@ class SirajApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         fontFamily: 'Roboto',
-        scaffoldBackgroundColor: const Color(0xFFFDFBF7), // Light Beige
+        scaffoldBackgroundColor: const Color(0xFFFDFBF7),
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF0A4D2E), // Royal Green
+          seedColor: const Color(0xFF0A4D2E),
           primary: const Color(0xFF0A4D2E),
-          secondary: const Color(0xFFD4AF37), // Gold
+          secondary: const Color(0xFFD4AF37),
         ),
       ),
       home: const HomePage(),
@@ -58,8 +61,8 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: const Color(0xFF0A4D2E),
         elevation: 4,
         toolbarHeight: 90,
-        title: Column(
-          children: const [
+        title: const Column(
+          children: [
             Text(
               "﴿ وَقُل رَّبِّ زِدْنِي عِلْمًا ﴾",
               style: TextStyle(
@@ -96,7 +99,6 @@ class _HomePageState extends State<HomePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Wisdom Box
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
@@ -122,8 +124,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               const SizedBox(height: 20),
-
-              // Main Sections Grid
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
@@ -176,8 +176,6 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
               const SizedBox(height: 30),
-
-              // Designer Footer Credits
               const Center(
                 child: Text(
                   "إعداد وتصميم: مُعتز محمد الأحمد - مدرسةُ الأندلس الثالثة",
@@ -346,10 +344,39 @@ class ArabicSectionPage extends StatelessWidget {
   }
 }
 
-// ==================== عارض PDF لكتاب العربية ====================
+// ==================== عارض PDF لكتاب العربية المصحح ====================
 
-class PdfViewerPage extends StatelessWidget {
+class PdfViewerPage extends StatefulWidget {
   const PdfViewerPage({super.key});
+
+  @override
+  State<PdfViewerPage> createState() => _PdfViewerPageState();
+}
+
+class _PdfViewerPageState extends State<PdfViewerPage> {
+  String? _localPath;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPdfFromAssets();
+  }
+
+  Future<void> _loadPdfFromAssets() async {
+    try {
+      final bytes = await rootBundle.load('assets/books/arabic_book.pdf');
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/arabic_book.pdf');
+      await file.writeAsBytes(bytes.buffer.asUint8List(), flush: true);
+      setState(() {
+        _localPath = file.path;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -359,9 +386,11 @@ class PdfViewerPage extends StatelessWidget {
         title: const Text("الكتاب المدرسي", style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
-      body: const PDFView(
-        assetPath: 'assets/books/arabic_book.pdf',
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: Color(0xFF0A4D2E)))
+          : _localPath != null
+              ? PDFView(filePath: _localPath)
+              : const Center(child: Text("تعذر تحميل ملف الكتاب المدرسي")),
     );
   }
 }
@@ -534,9 +563,7 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 20),
-
               if (_isLoading)
                 const Center(
                   child: Padding(
@@ -550,7 +577,6 @@ class _ArabicActivitiesPageState extends State<ArabicActivitiesPage> {
                     ),
                   ),
                 ),
-
               if (_generatedActivities != null)
                 Card(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
