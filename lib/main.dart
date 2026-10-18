@@ -183,7 +183,7 @@ class _HomePageState extends State<HomePage> {
                         const SizedBox(height: 3),
                         Text(
                           getTodayWisdom(),
-                          style: TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.black87),
+                          style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic, color: Colors.black87),
                         ),
                       ],
                     ),
@@ -204,7 +204,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 12),
 
-            // 4. الأقسام الرئيسية (بما فيها قسم الكتب المدرسية الجديد)
+            // 4. الأقسام الرئيسية الأربعة
             _buildSectionCard(
               context,
               title: 'العربية لغتي',
@@ -216,12 +216,6 @@ class _HomePageState extends State<HomePage> {
               title: 'الرياضيات',
               subtitle: 'الأعداد والحساب والأشكال الهندسية وفق المنهاج',
               icon: Icons.calculate_rounded,
-            ),
-            _buildSectionCard(
-              context,
-              title: 'الكُتب المدرسية',
-              subtitle: 'تصفح كتاب لغتي وكتاب الرياضيات المدرسي',
-              icon: Icons.library_books_rounded,
             ),
             _buildSectionCard(
               context,
@@ -258,7 +252,7 @@ class _HomePageState extends State<HomePage> {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('قسم $title - قريباً سيتم ربط محتوياته', style: const TextStyle(color: Colors.white)),
+                content: Text('قسم $title - سنتناول تفاصيله معاً', style: const TextStyle(color: Colors.white)),
                 backgroundColor: const Color(0xFF0A4D2E),
                 duration: const Duration(seconds: 1),
               ),
