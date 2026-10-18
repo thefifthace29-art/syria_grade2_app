@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const SirajApp());
@@ -35,7 +36,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // قائمة حكم تتغير يومياً
   final List<String> _wisdomList = [
     "العلمُ نورٌ يضيءُ طريقَ المستقبَل.",
     "مَن فَتَحَ مَدرَسَةً، أغلَقَ سِجناً.",
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A4D2E), // أخضر ملكي
+        backgroundColor: const Color(0xFF0A4D2E),
         centerTitle: true,
         elevation: 3,
         title: const Text(
@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage> {
           style: TextStyle(
             fontSize: 26,
             fontWeight: FontWeight.bold,
-            color: Color(0xFFD4AF37), // ذهبي
+            color: Color(0xFFD4AF37),
             letterSpacing: 1.2,
           ),
         ),
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 15),
 
-            // 2. بطاقة ترحيبية وإرشادية مبسطة
+            // 2. بطاقة ترحيبية وإرشادية
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
@@ -204,33 +204,58 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 12),
 
-            // 4. الأقسام الرئيسية الأربعة
+            // الأقسام الرئيسية
             _buildSectionCard(
               context,
               title: 'العربية لغتي',
-              subtitle: 'الدروس والوحدات القرائية والقواعد وفق المنهاج',
+              subtitle: 'الكتاب المدرسي، التحضير، الأنشطة، والامتحانات',
               icon: Icons.menu_book_rounded,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ArabicSubjectPage()),
+                );
+              },
             ),
             _buildSectionCard(
               context,
               title: 'الرياضيات',
               subtitle: 'الأعداد والحساب والأشكال الهندسية وفق المنهاج',
               icon: Icons.calculate_rounded,
+              onTap: () {
+                _showPendingSnackBar(context, 'الرياضيات');
+              },
             ),
             _buildSectionCard(
               context,
               title: 'متابعة الطلاب',
               subtitle: 'سجل الحضور والتقييم والملاحظات التربوية',
               icon: Icons.groups_rounded,
+              onTap: () {
+                _showPendingSnackBar(context, 'متابعة الطلاب');
+              },
             ),
             _buildSectionCard(
               context,
               title: 'التحضير',
               subtitle: 'الخطط الدرسية والتحضير اليومي للمواد',
               icon: Icons.assignment_rounded,
+              onTap: () {
+                _showPendingSnackBar(context, 'التحضير');
+              },
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showPendingSnackBar(BuildContext context, String title) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('قسم $title - سنتناول تفاصيله القادمة معاً', style: const TextStyle(color: Colors.white)),
+        backgroundColor: const Color(0xFF0A4D2E),
+        duration: const Duration(seconds: 1),
       ),
     );
   }
@@ -240,6 +265,7 @@ class _HomePageState extends State<HomePage> {
     required String title,
     required String subtitle,
     required IconData icon,
+    required VoidCallback onTap,
   }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -249,15 +275,7 @@ class _HomePageState extends State<HomePage> {
         elevation: 2,
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('قسم $title - سنتناول تفاصيله معاً', style: const TextStyle(color: Colors.white)),
-                backgroundColor: const Color(0xFF0A4D2E),
-                duration: const Duration(seconds: 1),
-              ),
-            );
-          },
+          onTap: onTap,
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -296,6 +314,210 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+// ==========================================
+// شاشة قسم: العربية لغتي والتفريعات الأربعة
+// ==========================================
+class ArabicSubjectPage extends StatelessWidget {
+  const ArabicSubjectPage({super.key});
+
+  final String arabicBookUrl = "https://drive.google.com/file/d/1xNmT0d2mk0wqbTsnt4a8iL_98h4mh3Gh/view?usp=drivesdk";
+
+  Future<void> _openBookUrl(BuildContext context) async {
+    final Uri url = Uri.parse(arabicBookUrl);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('تعذر فتح رابط الكتاب'),
+            backgroundColor: Color(0xFF0A4D2E),
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0A4D2E),
+        elevation: 2,
+        iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
+        title: const Text(
+          'العربية لغتي',
+          style: TextStyle(
+            color: Color(0xFFD4AF37),
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              'أقسام مادة العربية لغتي:',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF0A4D2E),
+              ),
+            ),
+            const SizedBox(height: 15),
+            
+            // 1. الكتاب المدرسي المربوط بالرابط المباشر
+            _buildSubSectionCard(
+              context,
+              title: 'الكتاب المدرسي',
+              subtitle: 'كتاب العربية لغتي - الصف الثاني الابتدائي (فتح الكتاب عبر Drive)',
+              icon: Icons.menu_book_rounded,
+              onTap: () => _openBookUrl(context),
+            ),
+
+            // 2. قسم تحضير الدروس
+            _buildSubSectionCard(
+              context,
+              title: 'تحضير الدروس',
+              subtitle: 'الخطط والأهداف الإجرائية والوسائل المتبعة لكل درس',
+              icon: Icons.assignment_rounded,
+              onTap: () {
+                _showInfoDialog(
+                  context,
+                  'تحضير الدروس',
+                  'هنا ستجد الخطط الدرسية الجاهزة والمنظمة وفق الوحدات والدروس.',
+                );
+              },
+            ),
+
+            // 3. قسم أنشطة شفهية وكتابية
+            _buildSubSectionCard(
+              context,
+              title: 'أنشطة شفهية وكتابية',
+              subtitle: 'تدريبات القراءة، التعبير الشفهي، والإملاء لكل درس',
+              icon: Icons.edit_note_rounded,
+              onTap: () {
+                _showInfoDialog(
+                  context,
+                  'أنشطة شفهية وكتابية',
+                  'تمارين تفاعلية وتدريبات قراءة وإملاء مخصصة لكل درس من دروس الكتاب.',
+                );
+              },
+            ),
+
+            // 4. توليد أوراق عمل واسئلة مذاكرات وامتحانات
+            _buildSubSectionCard(
+              context,
+              title: 'توليد أوراق عمل وامتحانات',
+              subtitle: 'توليد نماذج مذاكرات واختبارات وأوراق عمل لكل درس',
+              icon: Icons.description_rounded,
+              onTap: () {
+                _showInfoDialog(
+                  context,
+                  'توليد أوراق عمل وامتحانات',
+                  'نظام يتيح للمعلم والولي أمر توليد اختبارات وأوراق عمل مخصصة.',
+                );
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSubSectionCard(
+    BuildContext context, {
+    required String title,
+    required String subtitle,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 14),
+      child: Material(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        elevation: 2,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: const Color(0xFFD4AF37).withOpacity(0.4), width: 1),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF0A4D2E),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(icon, color: const Color(0xFFD4AF37), size: 28),
+                ),
+                const SizedBox(width: 15),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold, color: Color(0xFF0A4D2E)),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        subtitle,
+                        style: const TextStyle(fontSize: 12, color: Colors.black54),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios_rounded, color: Color(0xFFD4AF37), size: 18),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showInfoDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFFFDFBF7),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          title,
+          style: const TextStyle(color: Color(0xFF0A4D2E), fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        content: Text(
+          content,
+          style: const TextStyle(fontSize: 14, color: Colors.black87),
+          textAlign: TextAlign.center,
+        ),
+        actions: [
+          Center(
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF0A4D2E),
+                foregroundColor: const Color(0xFFD4AF37),
+              ),
+              onPressed: () => Navigator.pop(context),
+              child: const Text('تم'),
+            ),
+          )
+        ],
       ),
     );
   }
