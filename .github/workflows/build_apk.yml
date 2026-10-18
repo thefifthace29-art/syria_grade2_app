@@ -28,8 +28,30 @@ jobs:
 
     - name: Set App Display Name
       run: |
-        sed -i 's/android:label="syria_grade2_app"/android:label="سِراج"/g' android/app/src/main/AndroidManifest.xml
-        sed -i 's/android:label="@string/app_name"/android:label="سِراج"/g' android/app/src/main/AndroidManifest.xml
+        python3 -c '
+        path = "android/app/src/main/AndroidManifest.xml"
+        with open(path, "r", encoding="utf-8") as f:
+            content = f.read()
+        content = content.replace("syria_grade2_app", "سِراج").replace("@string/app_name", "سِراج")
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(content)
+        '
+
+    - name: Install ImageMagick
+      run: sudo apt-get update && sudo apt-get install -y imagemagick
+
+    - name: Generate App Icons
+      run: |
+        mkdir -p android/app/src/main/res/mipmap-hdpi
+        mkdir -p android/app/src/main/res/mipmap-mdpi
+        mkdir -p android/app/src/main/res/mipmap-xhdpi
+        mkdir -p android/app/src/main/res/mipmap-xxhdpi
+        mkdir -p android/app/src/main/res/mipmap-xxxhdpi
+        convert -background none assets/icon/siraj_icon.svg -resize 72x72 android/app/src/main/res/mipmap-hdpi/ic_launcher.png
+        convert -background none assets/icon/siraj_icon.svg -resize 48x48 android/app/src/main/res/mipmap-mdpi/ic_launcher.png
+        convert -background none assets/icon/siraj_icon.svg -resize 96x96 android/app/src/main/res/mipmap-xhdpi/ic_launcher.png
+        convert -background none assets/icon/siraj_icon.svg -resize 144x144 android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png
+        convert -background none assets/icon/siraj_icon.svg -resize 192x192 android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
     - name: Install Dependencies
       run: flutter pub get
