@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:intl/date_symbol_data_local.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('ar', null);
+void main() {
   runApp(const SirajApp());
 }
 
@@ -39,7 +35,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // قائمة حكم متجددة يومياً
+  // قائمة حكم تتغير يومياً
   final List<String> _wisdomList = [
     "العلمُ نورٌ يضيءُ طريقَ المستقبَل.",
     "مَن فَتَحَ مَدرَسَةً، أغلَقَ سِجناً.",
@@ -57,10 +53,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    DateTime now = DateTime.now();
-    String formattedDate = DateFormat('EEEE، d MMMM yyyy', 'ar').format(now);
-    String formattedTime = DateFormat('hh:mm a', 'ar').format(now);
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A4D2E), // أخضر ملكي
@@ -141,7 +133,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 15),
 
-            // 2. بطاقة الوقت والتاريخ
+            // 2. بطاقة ترحيبية وإرشادية مبسطة
             Container(
               padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
               decoration: BoxDecoration(
@@ -152,28 +144,14 @@ class _HomePageState extends State<HomePage> {
                   BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 5)
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(Icons.calendar_today_rounded, color: Color(0xFF0A4D2E), size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        formattedDate,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF0A4D2E)),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      const Icon(Icons.access_time_rounded, color: Color(0xFFD4AF37), size: 20),
-                      const SizedBox(width: 5),
-                      Text(
-                        formattedTime,
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF0A4D2E)),
-                      ),
-                    ],
+                  Icon(Icons.school_rounded, color: Color(0xFF0A4D2E), size: 22),
+                  SizedBox(width: 10),
+                  Text(
+                    'تطبيق تعليمي تربوي للصف الثاني الابتدائي',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFF0A4D2E)),
                   ),
                 ],
               ),
@@ -216,7 +194,7 @@ class _HomePageState extends State<HomePage> {
 
             const SizedBox(height: 20),
 
-            const Alignment(
+            const Align(
               alignment: Alignment.centerRight,
               child: Text(
                 'الأقسام الرئيسية:',
@@ -274,7 +252,7 @@ class _HomePageState extends State<HomePage> {
           onTap: () {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('قسم $title - سنتناول تقسيم المنهاج الخاص به معاً', style: const TextStyle(color: Colors.white)),
+                content: Text('قسم $title - سنتناول تفاصيله معاً', style: const TextStyle(color: Colors.white)),
                 backgroundColor: const Color(0xFF0A4D2E),
                 duration: const Duration(seconds: 1),
               ),
