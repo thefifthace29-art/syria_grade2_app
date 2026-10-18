@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(const SirajApp());
@@ -320,20 +323,34 @@ class _HomePageState extends State<HomePage> {
 }
 
 // ==========================================
-// شاشة قسم: العربية لغتي والتفريعات الأربعة
+// شاشة قسم: العربية لغتي
 // ==========================================
 class ArabicSubjectPage extends StatelessWidget {
   const ArabicSubjectPage({super.key});
 
-  final String arabicBookUrl = "https://drive.google.com/file/d/1xNmT0d2mk0wqbTsnt4a8iL_98h4mh3Gh/view?usp=drivesdk";
+  Future<void> _openOfflinePdf(BuildContext context) async {
+    try {
+      final ByteData data = await rootBundle.load('assets/books/arabic_book.pdf');
+      final Directory tempDir = await getTemporaryDirectory();
+      final File tempFile = File('${tempDir.path}/arabic_book.pdf');
+      await tempFile.writeAsBytes(data.buffer.asUint8List(), flush: true);
 
-  Future<void> _openBookUrl(BuildContext context) async {
-    final Uri url = Uri.parse(arabicBookUrl);
-    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => PdfViewerPage(
+              filePath: tempFile.path,
+              title: 'كتاب العربية لغتي',
+            ),
+          ),
+        );
+      }
+    } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('تعذر فتح رابط الكتاب'),
+            content: Text('يرجى التأكد من مسار رفع ملف الكتاب الـ PDF في المستودع'),
             backgroundColor: Color(0xFF0A4D2E),
           ),
         );
@@ -373,13 +390,13 @@ class ArabicSubjectPage extends StatelessWidget {
             ),
             const SizedBox(height: 15),
             
-            // 1. الكتاب المدرسي المربوط بالرابط المباشر
+            // 1. الكتاب المدرسي المباشر بدون إنترنت
             _buildSubSectionCard(
               context,
               title: 'الكتاب المدرسي',
-              subtitle: 'كتاب العربية لغتي - الصف الثاني الابتدائي (فتح الكتاب عبر Drive)',
+              subtitle: 'تصفح كتاب العربية لغتي كاملاً بدون إنترنت (Offline)',
               icon: Icons.menu_book_rounded,
-              onTap: () => _openBookUrl(context),
+              onTap: () => _openOfflinePdf(context),
             ),
 
             // 2. قسم تحضير الدروس
@@ -518,6 +535,75 @@ class ArabicSubjectPage extends StatelessWidget {
             ),
           )
         ],
+      ),
+    );
+  }
+}
+
+// ==========================================
+// شاشة عرض الـ PDF المدمجة للتصفح
+// ==========================================
+class PdfViewerPage extends StatefulWidget {
+  final String filePath;
+  final String title;
+
+  const PdfViewerPage({
+    super.key,
+    required this.filePath,
+    required this.title,
+  });
+
+  @override
+  State<PdfViewerPage> createState() => _PdfViewerPageState();
+}
+
+class _PdfViewerPageState extends State<PdfViewerPage> {
+  int _totalPages = 0;
+  int _currentPage = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0A4D2E),
+        iconTheme: const IconThemeData(color: Color(0xFFD4AF37)),
+        title: Text(
+          widget.title,
+          style: const TextStyle(
+            color: Color(0xFFD4AF37),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+        actions: [
+          if (_totalPages > 0)
+            Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Text(
+                  '${_currentPage + 1} / $_totalPages',
+                  style: const TextStyle(color: Colors.white, fontSize: 14),
+                ),
+              ),
+            ),
+        ],
+      ),
+      body: PDFView(
+        filePath: widget.filePath,
+        enableSwipe: true,
+        swipeHorizontal: false,
+        autoSpacing: true,
+        pageFling: true,
+        onRender: (pages) {
+          setState(() {
+            _totalPages = pages ?? 0;
+          });
+        },
+        onPageChanged: (page, total) {
+          setState(() {
+            _currentPage = page ?? 0;
+          });
+        },
       ),
     );
   }
